@@ -37,19 +37,6 @@ int sizeOfArray = N;
 
  
    
-       
- void PlottArray(unsigned int Cmd,float Array1[],float  Array2[], float ttm[]){
-   
-      SendData(Cmd+1, 1,1,ttm);                        // Tell PC an array is about to be sent                      
-      delay(1);
-      for(int x=0;  x < sizeOfArray;  x++){     // Send the arrays 
-        SendData(Cmd, round(Array1[x]),round(Array2[x]), ttm);
-        //delay(1);
-      }
-      
-      SendData(Cmd+2, 1,1,ttm);                        // Confirm arrrays have been sent
-    }
-
    
 
 void setup()
@@ -84,22 +71,57 @@ void loop()
     OCR1A=d/2;              //-+
     SET(TCCR1B,0);          //-Restart generator
 
-    results[50]=results[d]*0.5+(float)(v)*0.5; //Filter results
+    results[d]=results[d]*0.5+(float)(v)*0.5; //Filter results
    
     freq[d] = d;
 
- //plot(v,0);              //-Display
- //plot(results[d],1);
- //delayMicroseconds(1);
+ //   plot(v,0);              //-Display
+ //   plot(results[d],1);
+  // delayMicroseconds(1);
   }
-  float ttm[N];
-for (int i=0 ;i<160;i++)
-{
-ttm[i]=results[i];}
-PlottArray(1,freq,results,ttm); 
+
+
+//PlottArray(1,freq,results); 
  
 
   TOG(PORTB,0);            //-Toggle pin 8 after each sweep (good for scope)
+  
+  Serial.println(analogRead(A5));
+  // Mesure la tension sur la broche A0
+  delay(1);
+  int mesure = analogRead(A5);
+  
+  
+
+  pinMode(5, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(3, OUTPUT);
+  
+
+  if (mesure > 470 and mesure < 500)
+  {
+    digitalWrite(5,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(3,HIGH);
+  }
+  else if (mesure > 500 and mesure <520 )
+  {
+    digitalWrite(5,LOW);
+    digitalWrite(4,HIGH);
+    digitalWrite(3,LOW);
+  }
+  else if (mesure > 521 and mesure < 550)
+  {
+    digitalWrite(5,HIGH);
+    digitalWrite(4,HIGH);
+    digitalWrite(3,HIGH);
+  }
+  else 
+  {
+    digitalWrite(5,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(3,LOW);
+  }
 }
    
 

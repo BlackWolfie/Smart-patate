@@ -1,8 +1,8 @@
     byte yMSB=0, yLSB=0, xMSB=0, xLSB=0, zeroByte=128, Checksum=0;  
  
-    void SendData(int Command, unsigned int yValue,unsigned int xValue, float ttm[])
-    {
+    void SendData(int Command, unsigned int yValue,unsigned int xValue){
     
+
       
       /* >=================================================================< 
           y = 01010100 11010100    (x & y are 2 Byte integers)
@@ -37,8 +37,8 @@
         
        Checksum = (Command + yMSB + yLSB + xMSB + xLSB + zeroByte)%255;
        
-      if( Checksum !=0 ){
-       /* Serial.write(byte(0));            // send start bit 
+       if( Checksum !=0 ){
+        Serial.write(byte(0));            // send start bit 
         Serial.write(byte(Command));      // command eg: Which Graph is this data for
         
         Serial.write(byte(yMSB));         // Y value's most significant byte  
@@ -47,11 +47,22 @@
         Serial.write(byte(xLSB));         // X value's least significant byte  
         
         Serial.write(byte(zeroByte));     // Which values have a zero value
-        */Serial.write(byte(Checksum));     // Error Checking Byte
-       Serial.println(ttm[45]);
-        
-      }} 
+        Serial.write(byte(Checksum));     // Error Checking Byte
+       }
+    }  
     
 
 
+       
+ void PlottArray(unsigned int Cmd,float Array1[],float Array2[]){
+   
+      SendData(Cmd+1, 1,1);                        // Tell PC an array is about to be sent                      
+      delay(1);
+      for(int x=0;  x < sizeOfArray;  x++){     // Send the arrays 
+        SendData(Cmd, round(Array1[x]),round(Array2[x]));
+        //delay(1);
+      }
+      
+      SendData(Cmd+2, 1,1);                        // Confirm arrrays have been sent
+    }
 
